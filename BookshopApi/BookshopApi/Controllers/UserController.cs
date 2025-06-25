@@ -1,12 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using BookshopApi.Data;
 using BookshopApi.Models;
-//using BookshopApi.UserServices;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookshopApi.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/auth")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -23,7 +22,7 @@ namespace BookshopApi.Controllers
             return await _context.Users.ToListAsync();
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<User> GetById(int id)
         {
             return await _context.Users.FindAsync(id);
@@ -47,10 +46,10 @@ namespace BookshopApi.Controllers
                 return Unauthorized(new { message = "Invalid username or password" });
             }
 
-            return Ok(new { message = "Login successful", userId = user.Id });
+            return Ok(new { message = "Login successful", userId = user.Id});
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task Delete(int id)
         {
             var userToDelete = await _context.Users.FindAsync(id);

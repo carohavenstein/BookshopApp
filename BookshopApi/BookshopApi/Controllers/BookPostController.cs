@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BookshopApi.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/books")]
     [ApiController]
     public class BookPostController : ControllerBase
     {
@@ -26,7 +26,7 @@ namespace BookshopApi.Controllers
             return await _context.BookPosts.ToListAsync();
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<BookPost> GetById(int id)
         {
             return await _context.BookPosts.FindAsync(id);
@@ -40,7 +40,7 @@ namespace BookshopApi.Controllers
             await _context.SaveChangesAsync();
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task Update([FromBody] BookPost bookPost)
         {
             BookPost bookPostToUpdate = await _context.BookPosts.FindAsync(bookPost.Id);
@@ -55,7 +55,7 @@ namespace BookshopApi.Controllers
             await _context.SaveChangesAsync();
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task Delete(int id)
         {
             var bookPostToDelete = await _context.BookPosts.FindAsync(id);
