@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { BookPost } from './bookpost.model';
 import { AuthService } from './auth.service'
 import { map } from 'rxjs/operators';
@@ -44,6 +44,11 @@ export class BookPostService {
   updateBookPost(bookPost: BookPost): Observable<BookPost> {
     const userId = this.authService.getUserId();
     if (userId === null) throw new Error("Usuario no autenticado");
+
+    if (bookPost.userId !== userId) {
+      alert("You can only update your own posts.");
+      return throwError(() => new Error("Unauthorized update attempt"));
+    }
     
     bookPost.userId = userId;
     
@@ -56,10 +61,15 @@ export class BookPostService {
   }
 
   deleteBookPostById(bookPost: BookPost) {
-    const userId = this.authService.getUserId();
-    if (userId === null) throw new Error("Usuario no autenticado");
+    const currentUserId = this.authService.getUserId();
+    if (currentUserId === null) throw new Error("Usuario no autenticado");
+
+    if (bookPost.userId !== currentUserId) {
+      alert("You can only delete your own posts.");
+      return throwError(() => new Error("Unauthorized delete attempt"));
+    }
     
-    bookPost.userId = userId;
+    bookPost.userId = currentUserId;
     
     return this.http.delete(this.apiUrlBookPost + '/' + bookPost.id);
   }

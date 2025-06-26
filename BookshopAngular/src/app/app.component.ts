@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { LoginComponent } from './login/login.component';
 import { CommonModule } from '@angular/common';
@@ -9,14 +9,14 @@ import { AuthService } from './auth.service';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, FormsModule, LoginComponent, CommonModule, HttpClientModule],
+  imports: [RouterOutlet, FormsModule, CommonModule, HttpClientModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 export class AppComponent {
   title = 'mozziebooks';
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   get userId(): number | null {
     return this.authService.getUserId();
@@ -30,4 +30,9 @@ export class AppComponent {
     this.authService.logout();
     location.reload();
   }
+
+  goTo(path: string) {
+  this.router.navigate([path]);
+  }
+  
 }

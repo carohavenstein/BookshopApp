@@ -7,8 +7,8 @@ export class BookPost {
     public description: string,
     public condition: string,
     public price: number,
-    public date: string,
     public imageUrl: string,
     public userId: number,
+    public date?: string | null,
   ) {}
 }

@@ -1,0 +1,49 @@
+<h2>{{ isEditMode ? 'Edit book post' : 'Add new book post' }}</h2>
+
+<form (ngSubmit)="onSubmit()">
+  <div class="input-group">
+      <label for="title">Title</label>
+      <input id="title" [(ngModel)]="bookPost.title" name="title" required />
+    </div>
+
+    <div class="input-group">
+      <label for="author">Author</label>
+      <input id="author" [(ngModel)]="bookPost.author" name="author">
+    </div>
+
+    <div class="input-group">
+      <label for="genre">Genre</label>
+      <input id="genre" [(ngModel)]="bookPost.genre" name="genre">
+    </div>
+
+    <div class="input-group">
+      <label for="description">Description</label>
+      <textarea id="description" [(ngModel)]="bookPost.description" name="description"></textarea>
+    </div>
+
+    <div class="input-group">
+      <label for="condition">Condition</label>
+      <select id="condition" [(ngModel)]="bookPost.condition" name="condition">
+        <option value="">Select Condition</option>
+        <option value="new">New</option>
+        <option value="used">Used</option>
+      </select>
+    </div>
+
+    <div class="input-group">
+      <label for="price">Price</label>
+      <input id="price" [(ngModel)]="bookPost.price" name="price">
+    </div>
+
+    <div class="input-group">
+      <label for="imageUrl">Image Url</label>
+      <input id="imageUrl" [(ngModel)]="bookPost.imageUrl" name="imageUrl">
+    </div>
+
+    <div class="input-group">
+      <label for="userId">User Id</label>
+      <input id="userId" [(ngModel)]="bookPost.userId" name="userId">
+    </div>
+
+  <button type="submit">{{ isEditMode ? 'Update' : 'Create' }}</button>
+</form>

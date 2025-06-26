@@ -24,9 +24,9 @@ export class BookPostsComponent implements OnInit {
     description: '',
     condition: '',
     price: 0,
-    date: '',
     imageUrl: '',
-    userId: 0
+    userId: 0,
+    date: null,
   };
 
   constructor(
@@ -45,28 +45,17 @@ export class BookPostsComponent implements OnInit {
     this.bookPostService.addBookPost(this.newBookPost).subscribe(bookPost => {
         this.bookPosts.push(bookPost);
       });
+      
   }
 
   deleteBookPost(bookPostToDelete: BookPost) {
-    const currentUserId = this.authService.getUserId();
-
-    if (currentUserId === null) {
-      alert("You must be logged in to delete a book post.");
-      return;
-    }
-
-    if (bookPostToDelete.userId !== currentUserId) {
-      alert("You can only delete your own posts.");
-      return;
-    }
-
     this.bookPostService.deleteBookPostById(bookPostToDelete).subscribe(() => {
       this.bookPosts = this.bookPosts.filter(bookPost => bookPost.id !== bookPostToDelete.id)
     });
   }
 
   editBookPost(id: number) {
-    this.router.navigate(['/addBookPost'], { queryParams: { id: id } });
+    this.router.navigate(['/edit-book', id]);
   }
 
 }

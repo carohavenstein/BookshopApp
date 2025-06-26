@@ -1,5 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
-/* https://colorhunt.co/palette/fff2e0c0c9eea2aadb898ac4 */
+/* https://colorhunt.co/palette/fff2e0c0c9eea2aadb898ac4 
+
+<span *ngIf="isAuthenticated()">Hi, {{ userId }}!</span>
+*/
 
 * {
   box-sizing: border-box;
@@ -52,23 +55,13 @@ header h1 {
   font-weight: bold;
 }
 
-.nav-links:hover {
-  text-decoration: unset;
-
-}
-
-.logout-btn {
-  background-color: #898AC4;
-  border: none;
-  padding: 0.4rem 0.8rem;
-  border-radius: 5px;
-  color: white;
-  font-weight: bold;
+.h-btn {
+  color: black;
   cursor: pointer;
 }
 
-.logout-btn:hover {
-  background-color: #6c6da5;
+.h-btn:hover {
+  background-color: #898AC4;
 }
 
 main {

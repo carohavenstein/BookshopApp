@@ -14,7 +14,7 @@ namespace BookshopApi.Models
         public string Description { get; set; }
         public string Condition { get; set; } // used, new
         public float Price { get; set; }
-        public DateTime Date { get; set; }
+        public DateTime? Date { get; set; }
         public string ImageUrl { get; set; }
 
         public int UserId { get; set; }
