@@ -1,3 +1,6 @@
+/* You can add global styles to this file, and also import other style files */
+/* https://colorhunt.co/palette/fff2e0c0c9eea2aadb898ac4 */
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -6,7 +9,7 @@
 
 body, html {
   font-family: 'Segoe UI', sans-serif;
-  background-color: #f4f4f4;
+  background-color: #000000;
   color: #333;
   height: 100%;
 }
@@ -18,25 +21,54 @@ body, html {
 }
 
 header {
-  background-color: #4a148c;
-  color: white;
-  padding: 1rem;
+  background-color: #C0C9EE;
+  color: #898AC4;
+  padding: 1rem 2rem;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 
 header h1 {
-  font-size: 1.8rem;
-  margin-bottom: 0.5rem;
+  font-size: 2rem;
+  margin-bottom: 0.8rem;
+  color: rgb(0, 0, 0);
+  font-weight: bold;
 }
 
-nav a {
-  color: white;
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  color: black;
   margin-right: 1.5rem;
-  text-decoration: none;
-  font-weight: 500;
+  font-weight: bold;
 }
 
-nav a:hover {
-  text-decoration: underline;
+.nav-links:hover {
+  text-decoration: unset;
+
+}
+
+.logout-btn {
+  background-color: #898AC4;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background-color: #6c6da5;
 }
 
 main {
@@ -45,9 +77,9 @@ main {
 }
 
 footer {
-  background-color: #eee;
+  background-color: #C0C9EE;
   padding: 1rem;
   text-align: center;
   font-size: 0.9rem;
-  color: #555;
+  color: black;
 }

@@ -1,0 +1,90 @@
+<style>
+    .rowGrayBg {
+        background-color: rgb(222, 226, 224);
+    }
+</style>
+<h4 class="page-title">All our listings</h4>
+
+<div class="row">
+  <div class="bookPosts-container">
+  <div *ngFor="let bookPost of bookPosts" class="bookPost-card">
+    <div class="card h-100 shadow-sm">
+        <h5 class="card-title">{{ bookPost.title }}</h5>
+        <h6 class="card-subtitle mb-2 text-muted">{{ bookPost.author }}</h6>
+        <p class="card-text"><strong>Genre:</strong> {{ bookPost.genre }}</p>
+        <p class="card-text"><strong>Description:</strong> {{ bookPost.description }}</p>
+        <p class="card-text"><strong>Condition:</strong> {{ bookPost.condition }}</p>
+        <p class="card-text"><strong>Price:</strong> ${{ bookPost.price }}</p>
+        <p class="card-text"><strong>Date:</strong> {{ bookPost.date }}</p>
+        <p class="card-text"><strong>User ID:</strong> {{ bookPost.userId }}</p>
+        <img *ngIf="bookPost.imageUrl" [src]="bookPost.imageUrl" alt="Book Image" class="img-fluid mb-2 rounded" />
+        
+        <div class="d-flex justify-content-end">
+          <a href="javascript:void(0)" (click)="editBookPost(bookPost.id)" class="btn btn-sm btn-outline-primary me-2">
+            <i class="fa fa-edit"></i>
+          </a>
+          <a href="javascript:void(0)" (click)="deleteBookPost(bookPost)" class="btn btn-sm btn-outline-danger">
+            <i class="fa fa-trash"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="add-bookPost-container">
+  <h3 class="add-bookPost-title"> Add book post</h3>
+  <form (submit)="addBookPost()" class="bookPost-form">
+    
+    <div class="input-group">
+      <label for="title">Title</label>
+      <input id="title" [(ngModel)]="newBookPost.title" name="title" required />
+    </div>
+
+    <div class="input-group">
+      <label for="author">Author</label>
+      <input id="author" [(ngModel)]="newBookPost.author" name="author">
+    </div>
+
+    <div class="input-group">
+      <label for="genre">Genre</label>
+      <input id="genre" [(ngModel)]="newBookPost.genre" name="genre">
+    </div>
+
+    <div class="input-group">
+      <label for="description">Description</label>
+      <textarea id="description" [(ngModel)]="newBookPost.description" name="description"></textarea>
+    </div>
+
+    <div class="input-group">
+      <label for="condition">Condition</label>
+      <select id="condition" [(ngModel)]="newBookPost.condition" name="condition">
+        <option value="">Select Condition</option>
+        <option value="new">New</option>
+        <option value="used">Used</option>
+      </select>
+    </div>
+
+    <div class="input-group">
+      <label for="price">Price</label>
+      <input id="price" [(ngModel)]="newBookPost.price" name="price">
+    </div>
+
+    <div class="input-group">
+      <label for="date">Date</label>
+      <input id="date" [(ngModel)]="newBookPost.date" name="date" type="date" />
+    </div>
+
+    <div class="input-group">
+      <label for="imageUrl">Image Url</label>
+      <input id="imageUrl" [(ngModel)]="newBookPost.imageUrl" name="imageUrl">
+    </div>
+
+    <div class="input-group">
+      <label for="userId">User Id</label>
+      <input id="userId" [(ngModel)]="newBookPost.userId" name="userId">
+    </div>
+
+    <button type="submit" class="add-bookPost-button">Add book post</button>
+  </form>
+</div>
