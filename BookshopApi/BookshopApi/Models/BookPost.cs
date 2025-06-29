@@ -13,7 +13,7 @@ namespace BookshopApi.Models
         public string Genre { get; set; }
         public string Description { get; set; }
         public string Condition { get; set; } // used, new
-        public float Price { get; set; }
+        public double Price { get; set; }
         public DateTime? Date { get; set; }
         public string ImageUrl { get; set; }
 
