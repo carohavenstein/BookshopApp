@@ -1,15 +1,57 @@
 # SecondHandBookshopApp
 
-Sell your used books here!
+A simple web application where users can sell secondhand books.
+This proyect is mostly used for practicing DevOps workflows in Azure, including CI/CD pipelines and automated testing integration.
 
-# Code Scaffolding
+## Proyect Overview
 
-~/BookshopApp/BookshopApi/BookshopApi$ dotnet run --urls "http://localhost:7150"
+- Backend: ASP.NET Core Web API (BookshopApi)
 
+- Frontend: Angular (BookshopAngular)
 
-~/BookshopApp/BookshopAngular$ rm -rf node_modules dist package-lock.json
+- Testing: xUnit for API, Jasmine/Karma for Angular
+
+- DevOps: Azure Pipelines
+
+## Getting started
+
+### Backend
+```
+cd BookshopApp/BookshopApi/BookshopApi
+dotnet run --urls "http://localhost:7150"
+```
+
+Then go to http://localhost:7150/swagger/index.html to explore and test the available API endpoints using Swagger UI.
+
+### Frontend
+```
+cd BookshopApp/BookshopAngular
+
+rm -rf node_modules dist package-lock.json
+
 npm install
-ng serve
 
+ng serve
+```
+
+## Running Unit Tests
+
+### Backend Tests (xUnit)
+
+```
+cd BookshopApp/BookshopApi.Tests
+
+dotnet build
+
+dotnet test
+```
+
+### Frontend Tests (Jasmine + Karma)
+
+```
+cd BookshopApp/BookshopAngular
+
+ng test
+```
 
 
