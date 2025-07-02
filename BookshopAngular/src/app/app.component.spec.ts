@@ -1,10 +1,22 @@
 import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
+import { AuthService } from './auth.service';
+import { Router } from '@angular/router';
 
 describe('AppComponent', () => {
+  let mockAuthService: jasmine.SpyObj<AuthService>;
+  let mockRouter: jasmine.SpyObj<Router>;
+
   beforeEach(async () => {
+    mockAuthService = jasmine.createSpyObj('AuthService', ['getUserId', 'isAuthenticated', 'logout']);
+    mockRouter = jasmine.createSpyObj('Router', ['navigate']);
+
     await TestBed.configureTestingModule({
       imports: [AppComponent],
+      providers: [
+        { provide: AuthService, useValue: mockAuthService },
+        { provide: Router, useValue: mockRouter }
+      ]
     }).compileComponents();
   });
 
@@ -14,7 +26,7 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have the 'Second Hand Book Shop' title`, () => {
+  it(`should have the 'mozziebooks' title`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
     expect(app.title).toEqual('mozziebooks');
@@ -26,4 +38,28 @@ describe('AppComponent', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('h1')?.textContent).toContain('mozziebooks');
   });
+
+  it('should return userId from authService', () => {
+    mockAuthService.getUserId.and.returnValue(42);
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    expect(app.userId).toBe(42);
+  });
+
+  it('should return isAuthenticated from authService', () => {
+    mockAuthService.isAuthenticated.and.returnValue(true);
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    expect(app.isAuthenticated()).toBeTrue();
+  });
+
+  it('should navigate to a given path', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+
+    app.goTo('/books');
+
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/books']);
+  });
+
 });

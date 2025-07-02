@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { LoginComponent } from './login/login.component';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { AuthService } from './auth.service';
@@ -28,7 +27,7 @@ export class AppComponent {
 
   logout(): void {
     this.authService.logout();
-    location.reload();
+    window.location.reload();
   }
 
   goTo(path: string) {
