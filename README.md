@@ -53,5 +53,10 @@ cd BookshopApp/BookshopAngular
 
 ng test
 ```
+or to run tests and generate report
 
+```
+npm install karma-junit-reporter --save-dev
 
+ng test --karma-config=karma.conf.js --watch=false --browsers ChromeHeadless
+```
