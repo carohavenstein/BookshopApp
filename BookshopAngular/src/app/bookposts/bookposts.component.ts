@@ -43,9 +43,8 @@ export class BookPostsComponent implements OnInit {
 
   addBookPost(): void {
     this.bookPostService.addBookPost(this.newBookPost).subscribe(bookPost => {
-        this.bookPosts.push(bookPost);
-      });
-      
+      this.bookPosts.push(bookPost);
+    });
   }
 
   deleteBookPost(bookPostToDelete: BookPost) {
@@ -54,8 +53,14 @@ export class BookPostsComponent implements OnInit {
     });
   }
 
-  editBookPost(id: number) {
-    this.router.navigate(['/edit-book', id]);
+  editBookPost(bookPostToEdit: BookPost) {
+    this.bookPostService.updateBookPost(bookPostToEdit).subscribe((updatedPost) => {
+      this.router.navigate(['/edit-book', bookPostToEdit.id]);
+      const index = this.bookPosts.findIndex(post => post.id === updatedPost.id);
+      if (index !== -1) {
+        this.bookPosts[index] = updatedPost;
+      }
+    });
   }
-
+  
 }

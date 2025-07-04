@@ -60,3 +60,18 @@ npm install karma-junit-reporter --save-dev
 
 ng test --karma-config=karma.conf.js --watch=false --browsers ChromeHeadless
 ```
+
+## Integration Tests (Cypress)
+
+Interactive mode (opens the Cypress Test Runner GUI):
+
+```
+cd BookshopApp/BookshopAngular
+npx cypress open
+```
+
+Headless mode (executes tests in the terminal and generates results):
+```
+cd BookshopApp/BookshopAngular
+npx cypress run
+```

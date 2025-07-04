@@ -20,7 +20,7 @@
         <img *ngIf="bookPost.imageUrl" [src]="bookPost.imageUrl" alt="Book Image" class="img-fluid mb-2 rounded" />
         
         <div class="d-flex justify-content-end">
-          <a href="javascript:void(0)" (click)="editBookPost(bookPost.id)" class="btn btn-sm btn-outline-primary me-2">
+          <a href="javascript:void(0)" (click)="editBookPost(bookPost)" class="btn btn-sm btn-outline-primary me-2">
             <i class="fa fa-edit"></i>
           </a>
           <a href="javascript:void(0)" (click)="deleteBookPost(bookPost)" class="btn btn-sm btn-outline-danger">

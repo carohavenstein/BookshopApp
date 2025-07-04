@@ -28,10 +28,13 @@ export class BookPostService {
   }
 
   addBookPost(bookPost: BookPost): Observable<BookPost> {
-    const userId = this.authService.getUserId();
-    if (userId === null) throw new Error("Usuario no autenticado");
+    const currentUserId = this.authService.getUserId();
+    if (currentUserId == null) {
+      alert("Usuario no autenticado");
+      return throwError(() => new Error("Usuario no autenticado"));
+    }
     
-    bookPost.userId = userId;
+    bookPost.userId = currentUserId;
     
     const httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
@@ -42,27 +45,33 @@ export class BookPostService {
   }
   
   updateBookPost(bookPost: BookPost): Observable<BookPost> {
-    const userId = this.authService.getUserId();
-    if (userId === null) throw new Error("Usuario no autenticado");
+    const currentUserId = this.authService.getUserId();
+    if (currentUserId == null) {
+      alert("Usuario no autenticado");
+      return throwError(() => new Error("Usuario no autenticado"));
+    }
 
-    if (bookPost.userId !== userId) {
+    if (bookPost.userId !== currentUserId) {
       alert("You can only update your own posts.");
       return throwError(() => new Error("Unauthorized update attempt"));
     }
-    
-    bookPost.userId = userId;
-    
+
+    bookPost.userId = currentUserId;
     const httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
     };
     return this.http.put<BookPost>(
       this.apiUrlBookPost + '/' + bookPost.id, bookPost, httpOptions
     );
+    
   }
 
   deleteBookPostById(bookPost: BookPost) {
     const currentUserId = this.authService.getUserId();
-    if (currentUserId === null) throw new Error("Usuario no autenticado");
+    if (currentUserId === null) {
+      alert("Usuario no atenticado");
+      return throwError(() => new Error("Usuario no autenticado"));
+    }
 
     if (bookPost.userId !== currentUserId) {
       alert("You can only delete your own posts.");
@@ -70,7 +79,6 @@ export class BookPostService {
     }
     
     bookPost.userId = currentUserId;
-    
     return this.http.delete(this.apiUrlBookPost + '/' + bookPost.id);
   }
 }

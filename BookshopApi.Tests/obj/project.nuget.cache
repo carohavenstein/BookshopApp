@@ -1,13 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "ppjhpel0mMid7KMC79aRn8uDeD2N2n9bZE8CH0tIZ1n1EUPP6sOGeIijLnCDhCzFZyaQGDMea0qm2twQK1KZxA==",
+  "dgSpecHash": "a+/k2CMVkit8Gw5MXUWxBa/u67Wn14dUthtAQ+Y2UUk7HLIR8hWqsapxfW2tc4HVgB5+K/zoVY+tCIFwRZq2IA==",
   "success": true,
   "projectFilePath": "/home/caro/Documents/BookshopApp/BookshopApi.Tests/BookshopApi.Tests.csproj",
   "expectedPackageFiles": [
     "/home/caro/.nuget/packages/azure.core/1.35.0/azure.core.1.35.0.nupkg.sha512",
     "/home/caro/.nuget/packages/azure.identity/1.10.3/azure.identity.1.10.3.nupkg.sha512",
     "/home/caro/.nuget/packages/castle.core/5.1.1/castle.core.5.1.1.nupkg.sha512",
-    "/home/caro/.nuget/packages/coverlet.collector/6.0.0/coverlet.collector.6.0.0.nupkg.sha512",
+    "/home/caro/.nuget/packages/coverlet.collector/6.0.4/coverlet.collector.6.0.4.nupkg.sha512",
     "/home/caro/.nuget/packages/microsoft.bcl.asyncinterfaces/1.1.1/microsoft.bcl.asyncinterfaces.1.1.1.nupkg.sha512",
     "/home/caro/.nuget/packages/microsoft.codecoverage/17.6.0/microsoft.codecoverage.17.6.0.nupkg.sha512",
     "/home/caro/.nuget/packages/microsoft.csharp/4.5.0/microsoft.csharp.4.5.0.nupkg.sha512",
