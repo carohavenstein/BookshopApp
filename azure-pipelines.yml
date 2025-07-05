@@ -1,39 +1,147 @@
+trigger:
+- main
 
-# antes de build de back - tests y resultados de code coverage
- - task: DotNetCoreCLI@2
-   displayName: 'Ejecutar pruebas de la API'
-   inputs:
-     command: 'test'
-     projects: '**/*.Tests.csproj'  # Asegúrate de que el patrón apunte a tu proyecto de pruebas
-     arguments: '--collect:"XPlat Code Coverage"'
+pool:
+  vmImage: 'windows-latest'
 
- - task: PublishCodeCoverageResults@2
-   inputs:
-     summaryFileLocation: '$(Agent.TempDirectory)/**/*.cobertura.xml'
-     failIfCoverageEmpty: false
-   displayName: 'Publicar resultados de code coverage del back-end'
-# antes de build de back - tests y resultados de code coverage
+variables:
+  #nodeVersion: '18.19.0'
+  ConnectedServiceName: 'ServiceConnectionARM'
 
+  backImageName: 'bookshop-api'
+  frontImageName: 'bookshop-front'
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+  
+  buildOutput: '$(Build.ArtifactStagingDirectory)'
+  frontPath: './BookshopAngular'
+  backPath: './BookshopApi'
+  
+  ResourceGroupName: 'BookshopRG'
 
+  AppServicePlanLinux: MiAppPlan02
+  WebAppApiNameQA: 'bookshop-api-qa'
+  WebAppFrontNameQA: 'bookshop-front-qa'
+  WebAppApiNameProd: 'bookshop-api-prod'
+  WebAppFrontNameProd: 'bookshop-front-prod'
+  
 
-# antes de build de font - tests front y publicacion de resultados
- - script: npx ng test --karma-config=karma.conf.js --watch=false --browsers ChromeHeadless --code-coverage
-   displayName: 'Ejecutar pruebas del front'
-   workingDirectory: $(projectPath)
-   continueOnError: true  # Para que el pipeline continúe aunque falle
- 
- - task: PublishCodeCoverageResults@2
-   inputs:
-     summaryFileLocation: '$(projectPath)/coverage/lcov.info'
-     failIfCoverageEmpty: false
-   condition: always()  # Esto asegura que se ejecute siempre
-   displayName: 'Publicar resultados de code coverage del front'  
- 
- - task: PublishTestResults@2
-   inputs:
-     testResultsFormat: 'JUnit'
-     testResultsFiles: '$(projectPath)/test-results/test-results.xml'
-     failTaskOnFailedTests: true
-   condition: always()  # Esto asegura que se ejecute siempre
-   displayName: 'Publicar resultados de pruebas unitarias del front'
-# antes de build de font - tests front y publicacion de resultados
+stages:
+- stage: BuildAndTest
+  displayName: "Build and Test API and Front"
+  jobs:
+  # BOOKSHOPAPI: RUN UNIT TESTS AND BUILD
+  - job: BuildDotnet
+    displayName: "Build and Test API"
+    pool:
+      vmImage: 'windows-latest'
+    steps:
+    - checkout: self
+      fetchDepth: 0
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Restaurar paquetes NuGet'
+      inputs:
+        command: restore
+        projects: '$(solution)'
+    # BOOKSHOPAPI: RUN UNIT TESTS
+    - task: DotNetCoreCLI@2
+      displayName: 'Ejecutar pruebas de la API'
+      inputs:
+        command: 'test'
+        projects: '**/*.Tests.csproj'
+        arguments: '--collect:"XPlat Code Coverage"'
+        continueOnError: false
+
+    - task: PublishCodeCoverageResults@2
+      displayName: 'Publicar resultados de code coverage del back-end'
+      inputs:
+        summaryFileLocation: '$(Agent.TempDirectory)/**/*.cobertura.xml'
+        failIfCoverageEmpty: false
+      
+    - task: DotNetCoreCLI@2
+      # BOOKSHOPAPI: BUILD
+      displayName: 'Build BookshopApi'
+      inputs:
+        command: build
+        projects: 'BookshopApi/BookshopApi/BookshopApi.csproj'
+        arguments: '--configuration $(buildConfiguration) --output $(buildOutput)/api  --self-contained false'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Publicar aplicación'
+      inputs:
+        command: publish
+        publishWebProjects: True
+        arguments: '--configuration $(buildConfiguration) --output $(buildOutput)'
+        zipAfterPublish: False
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publicar artefactos de compilación'
+      inputs:
+        PathtoPublish: '$(buildOutput)'
+        ArtifactName: 'drop-back'
+        publishLocation: 'Container' #a chequearrr
+    
+    
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publicar Dockerfile de Back'
+      inputs:
+        targetPath: '$(Build.SourcesDirectory)/docker/api/Dockerfile'
+        artifact: 'dockerfile-back'
+
+  # BOOKSHOPANGULAR: RUN UNIT TESTS AND BUILD
+  - job: BuildAngular
+    displayName: "Build and Test Angular"
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    #- checkout: self
+    #- fetchDepth: 0
+    - task: NodeTool@0
+      displayName: 'Instalar Node.js'
+      inputs:
+        versionSpec: '22.x'
+    
+    - task: CmdLine@2
+      displayName: 'Instalar dependencias'
+      inputs:
+        script: npm install
+        workingDirectory: $(frontPath)
+
+    # BOOKSHOPAPI: RUN UNIT TESTS
+    - script: npx ng test --karma-config=karma.conf.js --watch=false --browsers ChromeHeadless --code-coverage
+      displayName: 'Ejecutar pruebas del front'
+      workingDirectory: $(frontPath)
+      continueOnError: false
+
+    - task: PublishCodeCoverageResults@2
+      displayName: 'Publicar resultados de code coverage del front'
+      inputs:
+        summaryFileLocation: '$(frontPath)/coverage/lcov.info'
+        failIfCoverageEmpty: false
+      condition: always()
+
+    - task: PublishTestResults@2
+      displayName: 'Publicar resultados de pruebas unitarias del front'
+      inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: '$(frontPath)/test-results/test-results.xml'
+        failTaskOnFailedTests: true
+      condition: always()
+      
+    # BOOKSHOPANGULAR: BUILD
+    - task: CmdLine@2
+      displayName: 'Compilar el proyecto Angular'
+      condition: succeeded()
+      inputs:
+        script: npx ng build --configuration production
+        workingDirectory: $(frontPath)
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publicar artefactos Angular'
+      inputs:
+        PathtoPublish: '$(frontPath)/dist/employee-crud-angular/browser' # controlar url
+        ArtifactName: 'drop-front'
+        publishLocation: 'Container' # a chequear
+  
