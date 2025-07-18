@@ -190,53 +190,53 @@ stages:
   dependsOn: DeployToQA #pedir aprobacion manual
   condition: succeeded()
   jobs:
-  -job:
-    - deployment: DeployBackToProd
-      displayName: 'Deploy Backend to Production'
-      environment: 'Production'
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-              - task: DownloadPipelineArtifact@2
-                displayName: 'Download Build Artifacts'
-                inputs:
-                  buildType: 'current'
-                  artifactName: 'drop-back'
-                  targetPath: '$(Pipeline.Workspace)/drop-back'
+    -job:
+      - deployment: DeployBackToProd
+        displayName: 'Deploy Backend to Production'
+        environment: 'Production'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadPipelineArtifact@2
+                  displayName: 'Download Build Artifacts'
+                  inputs:
+                    buildType: 'current'
+                    artifactName: 'drop-back'
+                    targetPath: '$(Pipeline.Workspace)/drop-back'
 
-              - script: ls -l "$(Pipeline.Workspace)/drop-back"
-                displayName: 'List Pipeline Workspace Content (Production)'
+                - script: ls -l "$(Pipeline.Workspace)/drop-back"
+                  displayName: 'List Pipeline Workspace Content (Production)'
 
-              - task: AzureRmWebAppDeployment@4
-                displayName: 'Deploy to Azure App Service (Production)'
-                inputs:
-                  azureSubscription: '$(ConnectedServiceName)'
-                  appType: 'webApp'
-                  WebAppName: '$(ProdWebAppName)'
-                  package: '$(Pipeline.Workspace)/drop-back'
-  -job:
-    - deployment: DeployFrontToProd
-      displayName: 'Deploy Frontend to Production'
-      environment: 'Production'
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-              - task: DownloadPipelineArtifact@2
-                displayName: 'Download Build Artifacts'
-                inputs:
-                  buildType: 'current'
-                  artifactName: 'drop-front'
-                  targetPath: '$(Pipeline.Workspace)/drop-front'
+                - task: AzureRmWebAppDeployment@4
+                  displayName: 'Deploy to Azure App Service (Production)'
+                  inputs:
+                    azureSubscription: '$(ConnectedServiceName)'
+                    appType: 'webApp'
+                    WebAppName: '$(ProdWebAppName)'
+                    package: '$(Pipeline.Workspace)/drop-back'
+    -job:
+      - deployment: DeployFrontToProd
+        displayName: 'Deploy Frontend to Production'
+        environment: 'Production'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadPipelineArtifact@2
+                  displayName: 'Download Build Artifacts'
+                  inputs:
+                    buildType: 'current'
+                    artifactName: 'drop-front'
+                    targetPath: '$(Pipeline.Workspace)/drop-front'
 
-              - script: ls -l "$(Pipeline.Workspace)/drop-front"
-                displayName: 'List Pipeline Workspace Content (Production)'
+                - script: ls -l "$(Pipeline.Workspace)/drop-front"
+                  displayName: 'List Pipeline Workspace Content (Production)'
 
-              - task: AzureRmWebAppDeployment@4
-                displayName: 'Deploy to Azure App Service (Production)'
-                inputs:
-                  azureSubscription: '$(ConnectedServiceName)'
-                  appType: 'webApp'
-                  WebAppName: '$(ProdWebAppName)'
-                  package: '$(Pipeline.Workspace)/drop-front'
+                - task: AzureRmWebAppDeployment@4
+                  displayName: 'Deploy to Azure App Service (Production)'
+                  inputs:
+                    azureSubscription: '$(ConnectedServiceName)'
+                    appType: 'webApp'
+                    WebAppName: '$(ProdWebAppName)'
+                    package: '$(Pipeline.Workspace)/drop-front'
