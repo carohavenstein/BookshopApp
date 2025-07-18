@@ -81,11 +81,19 @@ describe('BookPostService', () => {
     req.flush(dummyBookPost);
   });
 
-  it('should throw error when adding if user is not authenticated', () => {
+  it('should throw error when adding if user is not authenticated', (done) => {
     authServiceSpy.getUserId.and.returnValue(null);
-    expect(() => {
-      service.addBookPost(dummyBookPost).subscribe();
-    }).toThrowError('Usuario no autenticado');
+
+    service.addBookPost(dummyBookPost).subscribe({
+      next: () => {
+        fail('Expected an error, but got a result.');
+        done();
+      },
+      error: (err) => {
+        expect(err.message).toBe('Usuario no autenticado');
+        done();
+      }
+    });
   });
 
   it('should update book post if user is the owner', () => {

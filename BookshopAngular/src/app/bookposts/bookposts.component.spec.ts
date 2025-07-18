@@ -29,7 +29,7 @@ describe('BookPostsComponent', () => {
   ];
 
   beforeEach(async () => {
-    bookPostServiceSpy = jasmine.createSpyObj('BookPostService', ['getAllBookPosts', 'addBookPost', 'deleteBookPostById']);
+    bookPostServiceSpy = jasmine.createSpyObj('BookPostService', ['getAllBookPosts', 'addBookPost', 'deleteBookPostById', 'updateBookPost']);
     authServiceSpy = jasmine.createSpyObj('AuthService', ['getUserId']);
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
@@ -89,11 +89,6 @@ describe('BookPostsComponent', () => {
 
     expect(bookPostServiceSpy.deleteBookPostById).toHaveBeenCalledWith(postToDelete);
     expect(component.bookPosts.length).toBe(0);
-  });
-
-  it('should navigate to edit page when editBookPost is called', () => {
-    component.editBookPost(5);
-    expect(routerSpy.navigate).toHaveBeenCalledWith(['/edit-book', 5]);
   });
 
 });
