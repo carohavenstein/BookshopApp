@@ -5,27 +5,20 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  #nodeVersion: '18.19.0'
-  ConnectedServiceName: 'ServiceConnectionARM'
-
-  backImageName: 'bookshop-api'
-  frontImageName: 'bookshop-front'
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  ConnectedServiceName: 'Azure subscription 1 (5341073c-194f-47d6-9c70-69c9a32cbcdf)'
+  ResourceGroupName: 'Bookshop'
   
-  buildOutput: '$(Build.ArtifactStagingDirectory)'
   frontPath: './BookshopAngular'
   backPath: './BookshopApi'
+  buildOutput: '$(Build.ArtifactStagingDirectory)'
   
-  ResourceGroupName: 'BookshopRG'
-
-  AppServicePlanLinux: MiAppPlan02
-  WebAppApiNameQA: 'bookshop-api-qa'
-  WebAppFrontNameQA: 'bookshop-front-qa'
-  WebAppApiNameProd: 'bookshop-api-prod'
-  WebAppFrontNameProd: 'bookshop-front-prod'
-  
+  WebAppKind: 'webApp'
+  DevWebAppName: 'BookshopWebAppQA'
+  ProdWebAppName: 'BookshopWebAppPROD'
+ 
 
 stages:
 - stage: BuildAndTest
@@ -45,6 +38,7 @@ stages:
       inputs:
         command: restore
         projects: '$(solution)'
+    
     # BOOKSHOPAPI: RUN UNIT TESTS
     - task: DotNetCoreCLI@2
       displayName: 'Ejecutar pruebas de la API'
@@ -69,26 +63,20 @@ stages:
         arguments: '--configuration $(buildConfiguration) --output $(buildOutput)/api  --self-contained false'
 
     - task: DotNetCoreCLI@2
-      displayName: 'Publicar aplicación'
+      displayName: 'Publish BookshopApi'
       inputs:
         command: publish
         publishWebProjects: True
         arguments: '--configuration $(buildConfiguration) --output $(buildOutput)'
+        #dotnet publish $(solution) --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory) --no-build
         zipAfterPublish: False
 
     - task: PublishBuildArtifacts@1
-      displayName: 'Publicar artefactos de compilación'
+      displayName: 'Publish build artifacts'
       inputs:
         PathtoPublish: '$(buildOutput)'
         ArtifactName: 'drop-back'
-        publishLocation: 'Container' #a chequearrr
-    
-    
-    - task: PublishPipelineArtifact@1
-      displayName: 'Publicar Dockerfile de Back'
-      inputs:
-        targetPath: '$(Build.SourcesDirectory)/docker/api/Dockerfile'
-        artifact: 'dockerfile-back'
+        #publishLocation: 'Container'
 
   # BOOKSHOPANGULAR: RUN UNIT TESTS AND BUILD
   - job: BuildAngular
@@ -96,8 +84,8 @@ stages:
     pool:
       vmImage: 'ubuntu-latest'
     steps:
-    #- checkout: self
-    #- fetchDepth: 0
+    - checkout: self
+    - fetchDepth: 0
     - task: NodeTool@0
       displayName: 'Instalar Node.js'
       inputs:
@@ -132,7 +120,7 @@ stages:
       
     # BOOKSHOPANGULAR: BUILD
     - task: CmdLine@2
-      displayName: 'Compilar el proyecto Angular'
+      displayName: 'Build Bookshop Frontend'
       condition: succeeded()
       inputs:
         script: npx ng build --configuration production
@@ -143,5 +131,112 @@ stages:
       inputs:
         PathtoPublish: '$(frontPath)/dist/employee-crud-angular/browser' # controlar url
         ArtifactName: 'drop-front'
-        publishLocation: 'Container' # a chequear
+        #publishLocation: 'Container'
+
+# DEPLOY BACK AND FRONT TO QA + INTEGRATION TESTS
+- stage: DeployToQA
+  displayName: 'Deploy to QA'
+  dependsOn: BuildAndTest
+  condition: succeeded()
   
+  jobs:
+  - job: DeployBackToQA
+    displayName: 'Deploy Backend to QA'
+    steps:
+      - task: DownloadPipelineArtifact@2
+        displayName: 'Download Build Artifacts'
+        inputs:
+          buildType: 'current'
+          artifactName: 'drop-back'
+          targetPath: '$(Pipeline.Workspace)/drop-back'
+
+      - script: ls -l "$(Pipeline.Workspace)/drop-back"
+        displayName: 'List Pipeline Workspace Content (QA)'
+
+      - task: AzureRmWebAppDeployment@4
+        displayName: 'Deploy to Azure App Service (QA)'
+        inputs:
+          azureSubscription: '$(ConnectedServiceName)'
+          appType: 'webApp'
+          WebAppName: '$(DevWebAppName)'
+          package: '$(Pipeline.Workspace)/drop-back'
+
+  - job: DeployFrontToQA
+    displayName: 'Deploy Frontend to QA'
+    steps:
+      - task: DownloadPipelineArtifact@2
+        displayName: 'Download Build Artifacts'
+        inputs:
+          buildType: 'current'
+          artifactName: 'drop-front'
+          targetPath: '$(Pipeline.Workspace)/drop-front'
+
+      - script: ls -l "$(Pipeline.Workspace)/drop-front"
+        displayName: 'List Pipeline Workspace Content (QA)'
+
+      - task: AzureRmWebAppDeployment@4
+        displayName: 'Deploy to Azure App Service (QA)'
+        inputs:
+          azureSubscription: '$(ConnectedServiceName)'
+          appType: 'webApp'
+          WebAppName: '$(DevWebAppName)'
+          package: '$(Pipeline.Workspace)/drop-front'
+
+# INTEGRATION TESTS CYPRESS PENDING!!!!
+
+# DEPLOY TO PROD
+- stage: DeployToProd
+  displayName: 'Deploy to Production'
+  dependsOn: DeployToQA #pedir aprobacion manual
+  condition: succeeded()
+  jobs:
+  -job:
+    - deployment: DeployBackToProd
+      displayName: 'Deploy Backend to Production'
+      environment: 'Production'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - task: DownloadPipelineArtifact@2
+                displayName: 'Download Build Artifacts'
+                inputs:
+                  buildType: 'current'
+                  artifactName: 'drop-back'
+                  targetPath: '$(Pipeline.Workspace)/drop-back'
+
+              - script: ls -l "$(Pipeline.Workspace)/drop-back"
+                displayName: 'List Pipeline Workspace Content (Production)'
+
+              - task: AzureRmWebAppDeployment@4
+                displayName: 'Deploy to Azure App Service (Production)'
+                inputs:
+                  azureSubscription: '$(ConnectedServiceName)'
+                  appType: 'webApp'
+                  WebAppName: '$(ProdWebAppName)'
+                  package: '$(Pipeline.Workspace)/drop-back'
+  -job:
+    - deployment: DeployFrontToProd
+      displayName: 'Deploy Frontend to Production'
+      environment: 'Production'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - task: DownloadPipelineArtifact@2
+                displayName: 'Download Build Artifacts'
+                inputs:
+                  buildType: 'current'
+                  artifactName: 'drop-front'
+                  targetPath: '$(Pipeline.Workspace)/drop-front'
+
+              - script: ls -l "$(Pipeline.Workspace)/drop-front"
+                displayName: 'List Pipeline Workspace Content (Production)'
+
+              - task: AzureRmWebAppDeployment@4
+                displayName: 'Deploy to Azure App Service (Production)'
+                inputs:
+                  azureSubscription: '$(ConnectedServiceName)'
+                  appType: 'webApp'
+                  WebAppName: '$(ProdWebAppName)'
+                  package: '$(Pipeline.Workspace)/drop-front'
