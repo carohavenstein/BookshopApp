@@ -25,9 +25,9 @@ body, html {
 
 header {
   /* 
-    background-color: #C0C9EE;
+    background-color: blue;
   */
-  background-color: blue;
+  background-color: #C0C9EE;
   color: #898AC4;
   padding: 1rem 2rem;
   justify-content: space-between;
