@@ -10,13 +10,14 @@ describe('Auth Tests', () => {
         }
 
         cy.visit(`${baseUrl}/login`);
-        cy.wait(400);
+        cy.wait(500);
     });
 
     it('should show login form', () => {
         cy.contains('Login');
         cy.get('input[name="username"]').should('exist');
         cy.get('input[name="password"]').should('exist');
+        //cy.get('input[name="insert password"]').should('exist'); // para hacer fallar test integracion
     });
   
     it('should login and redirect to /books', () => {
@@ -24,7 +25,7 @@ describe('Auth Tests', () => {
       cy.get('input[name="password"]').type('janespassword');
       cy.get('button').contains('Ingresar').click();
   
-      cy.wait(400);
+      cy.wait(500);
       cy.url().should('include', '/books');
       cy.contains('All our listings');
     });
@@ -34,7 +35,7 @@ describe('Auth Tests', () => {
       cy.get('input[name="password"]').type('wrongpassword');
       cy.get('button').contains('Ingresar').click();
   
-      cy.wait(400);
+      cy.wait(500);
       cy.on('window:alert', (text) => {expect(text).to.contains('Login failed');});
     });
 
@@ -42,7 +43,7 @@ describe('Auth Tests', () => {
         cy.get('input[name="username"]').type('janedoe@gmail.com');
         cy.get('input[name="password"]').type('janespassword');
         cy.get('button').contains('Ingresar').click();
-        cy.wait(400);
+        cy.wait(500);
 
         cy.url().should('include', '/books');
 
@@ -57,7 +58,7 @@ describe('Auth Tests', () => {
 
     it('should show only limited nav options when not authenticated', () => {
         cy.visit(`${baseUrl}/books`);
-        cy.wait(400);
+        cy.wait(500);
         cy.get('header').within(() => {
         cy.contains('mozziebooks').should('exist');
         cy.contains('Home').should('exist');

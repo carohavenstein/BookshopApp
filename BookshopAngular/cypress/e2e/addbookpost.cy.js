@@ -13,13 +13,13 @@ describe('Add book post Tests', () => {
 
     it('should add book post', () => {
         cy.visit(`${baseUrl}/login`);
-        cy.wait(400);
+        cy.wait(500);
 
         cy.get('input[name="username"]').type('janedoe@gmail.com');
         cy.get('input[name="password"]').type('janespassword');
         cy.get('button').contains('Ingresar').click();
   
-        cy.wait(400);
+        cy.wait(500);
         cy.url().should('include', '/books');
 
         cy.get('header').within(() => {
@@ -29,7 +29,7 @@ describe('Add book post Tests', () => {
             cy.contains('Logout').should('exist');
             cy.contains('Login').should('not.exist');
         });
-        cy.wait(400);
+        cy.wait(500);
         cy.url().should('include', '/add-book');
 
         cy.contains('Add new book post');
@@ -41,17 +41,17 @@ describe('Add book post Tests', () => {
         cy.get('input[name="price"]').type('1');
         cy.get('input[name="imageUrl"]').should('exist');
         cy.get('button').contains('Create').click();
-        cy.wait(400);
+        cy.wait(500);
 
         cy.visit(`${baseUrl}/books`);
-        cy.wait(400);
+        cy.wait(500);
         cy.get('.bookPost-card').should('contain', 'test')
         
     });
 
     it('should show error and not add book post', () => {
         cy.visit(`${baseUrl}/add-book`);
-        cy.wait(400);
+        cy.wait(500);
         cy.url().should('include', '/add-book');
 
         cy.contains('Add new book post');
@@ -64,10 +64,10 @@ describe('Add book post Tests', () => {
         cy.get('input[name="imageUrl"]').should('exist');
 
         cy.get('button').contains('Create').click();
-        cy.wait(400);
+        cy.wait(500);
 
         cy.visit(`${baseUrl}/books`);
-        cy.wait(400);
+        cy.wait(500);
         
         cy.get('.bookPost-card').should('not.contain', 'notadded')
         

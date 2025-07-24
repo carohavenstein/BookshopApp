@@ -13,30 +13,30 @@ describe('Update book post Tests', () => {
 
     it('should update book post', () => {
         cy.visit(`${baseUrl}/login`);
-        cy.wait(400);
+        cy.wait(500);
 
         cy.get('input[name="username"]').type('janedoe@gmail.com');
         cy.get('input[name="password"]').type('janespassword');
         cy.get('button').contains('Ingresar').click();
   
-        cy.wait(400);
+        cy.wait(500);
         cy.url().should('include', '/books');
 
         cy.get('.bookPost-card').contains('h5', 'test')
             .parents('.bookPost-card')                    
             .find('a.btn-outline-primary')            
             .click();
-        cy.wait(400);
+        cy.wait(500);
         cy.url().should('include', '/edit-book/22');
 
         cy.contains('Edit book post');
         cy.get('input[name="title"]').clear().type('updated test');
         cy.get('input[name="author"]').clear().type('updated author');
         cy.get('button').contains('Update').click();
-        cy.wait(400);
+        cy.wait(500);
 
         cy.visit(`${baseUrl}/books`);
-        cy.wait(400);
+        cy.wait(500);
         cy.get('.bookPost-card')
             .contains('h5', 'updated test')
             .parents('.bookPost-card')
@@ -49,16 +49,16 @@ describe('Update book post Tests', () => {
 
     it('should show error and not update book post', () => {
         cy.visit(`${baseUrl}/edit-book/22`);
-        cy.wait(400);
+        cy.wait(500);
         cy.url().should('include', '/edit-book/22');
 
         cy.contains('Edit book post');
         cy.get('input[name="title"]').clear().type('failed updated test');
         cy.get('button').contains('Update').click();
-        cy.wait(400);
+        cy.wait(500);
 
         cy.visit(`${baseUrl}/books`);
-        cy.wait(400);
+        cy.wait(500);
         
         cy.get('.bookPost-card').should('not.contain', 'failed updated test')
         

@@ -10,7 +10,7 @@ describe('Home page Tests', () => {
         }
 
         cy.visit(`${baseUrl}/books`);
-        cy.wait(400);
+        cy.wait(500);
     });
 
     it('should show all listings', () => {

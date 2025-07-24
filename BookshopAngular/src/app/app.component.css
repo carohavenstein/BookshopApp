@@ -24,7 +24,10 @@ body, html {
 }
 
 header {
-  background-color: #C0C9EE;
+  /* 
+    background-color: #C0C9EE;
+  */
+  background-color: blue;
   color: #898AC4;
   padding: 1rem 2rem;
   justify-content: space-between;

@@ -19,7 +19,7 @@ namespace BookshopApi.Tests
 
             return new ApplicationDbContext(options);
         }
-
+        
         [Fact]
         public async Task GetAll_ReturnsListOfBookPosts()
         {
@@ -80,8 +80,9 @@ namespace BookshopApi.Tests
             Assert.Equal(DateTime.Today, result[1].Date?.Date);
             Assert.Equal("", result[1].ImageUrl);
             Assert.Equal(3, result[1].UserId);
-
+            //Assert.Equal(4, result[1].UserId); // test para hacer fallar unit test
         }
+        
 
         [Fact]
         public async Task GetById_ReturnsBookPostById()
